@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing Page + Checkout (Standalone)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; }
+    @keyframes floaty { 0%{transform:translateY(0)} 50%{transform:translateY(-2px)} 100%{transform:translateY(0)} }
+    @keyframes shimmer { 0%{transform:translateX(-120%)} 100%{transform:translateX(120%)} }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 antialiased min-h-screen">
+  <!-- Tabs -->
+  <div class="mx-auto max-w-6xl px-4 pt-10">
+    <div class="flex justify-center">
+      <div class="inline-flex items-center rounded-full bg-zinc-900 p-1 shadow-inner shadow-black/40">
+        <button onclick="switchTab('Personal')" id="tab-Personal" class="px-5 py-2 text-sm font-medium rounded-full bg-zinc-800 text-white shadow transition-all duration-300 active:scale-95">Personal</button>
+        <button onclick="switchTab('Education')" id="tab-Education" class="px-5 py-2 text-sm font-medium rounded-full text-zinc-400 hover:text-zinc-200 transition-all duration-300 active:scale-95">Education</button>
+        <button onclick="switchTab('Business')" id="tab-Business" class="px-5 py-2 text-sm font-medium rounded-full text-zinc-400 hover:text-zinc-200 transition-all duration-300 active:scale-95">Business</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Glow BG -->
+  <div class="relative" id="plansRoot">
+    <div class="pointer-events-none absolute inset-0 -z-10 flex items-start justify-center">
+      <div class="mt-24 h-72 w-[50rem] rounded-full bg-gradient-to-b from-indigo-500/20 to-fuchsia-500/10 blur-3xl"></div>
+    </div>
+
+    <!-- Plans Grid -->
+    <div id="plans" class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 pb-16 pt-8 md:grid-cols-2 transition-opacity duration-300"></div>
+
+    <!-- Footer Note -->
+    <div class="mx-auto max-w-6xl px-4 pb-8 text-sm text-zinc-400">
+      <div class="flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
+        <div>
+          Existing subscriber? <a href="#" class="text-zinc-200 underline underline-offset-4 hover:text-white">See billing help</a>
+        </div>
+        <div class="text-xs">For personal use only, and subject to our <a href="#" class="text-zinc-200 underline underline-offset-4 hover:text-white">policies</a>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout View -->
+  <section id="checkout" class="hidden">
+    <div class="mx-auto max-w-3xl px-4 pt-10 pb-24">
+      <button id="backToPlans" class="mb-6 inline-flex items-center gap-2 rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4"><path fill-rule="evenodd" d="M12.79 4.22a.75.75 0 0 1 0 1.06L7.06 11l5.73 5.72a.75.75 0 1 1-1.06 1.06l-6.26-6.25a.75.75 0 0 1 0-1.06l6.26-6.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
+        Back
+      </button>
+
+      <div class="relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/40 shadow-xl">
+        <div class="grid grid-cols-1 md:grid-cols-2">
+          <!-- Summary -->
+          <div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-zinc-800">
+            <h2 class="text-xl font-semibold tracking-tight">Checkout</h2>
+            <p class="mt-1 text-sm text-zinc-400">Complete your purchase securely.</p>
+            <div class="mt-6 rounded-2xl bg-zinc-900 p-4 ring-1 ring-white/5">
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <div id="summaryPlanName" class="text-lg font-semibold">Pro</div>
+                  <div id="summaryCadence" class="text-xs text-zinc-400">/ month</div>
+                </div>
+                <div id="summaryPrice" class="text-3xl font-bold">$20.00</div>
+              </div>
+              <ul id="summaryFeatures" class="mt-4 list-disc pl-5 text-sm text-zinc-300 space-y-1"></ul>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <form id="paymentForm" class="p-6 md:p-8 space-y-5" novalidate>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm text-zinc-300">First name</label>
+                <input required name="firstName" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              </div>
+              <div>
+                <label class="text-sm text-zinc-300">Last name</label>
+                <input required name="lastName" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm text-zinc-300">Email</label>
+              <input required type="email" name="email" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            </div>
+
+            <div>
+              <label class="text-sm text-zinc-300">Card number</label>
+              <input required inputmode="numeric" maxlength="19" name="card" placeholder="1234 5678 9012 3456" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm tracking-widest ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              <p id="cardError" class="mt-1 hidden text-xs text-red-400">Invalid card number.</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <label class="text-sm text-zinc-300">Expiry</label>
+                <input required inputmode="numeric" maxlength="5" name="expiry" placeholder="MM/YY" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              </div>
+              <div>
+                <label class="text-sm text-zinc-300">CVC</label>
+                <input required inputmode="numeric" maxlength="4" name="cvc" placeholder="123" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              </div>
+              <div>
+                <label class="text-sm text-zinc-300">ZIP/Postal</label>
+                <input required name="zip" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+              </div>
+            </div>
+
+            <div>
+              <label class="text-sm text-zinc-300">Billing address</label>
+              <input required name="address" class="mt-1 w-full rounded-xl bg-zinc-900 px-3 py-2 text-sm ring-1 ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            </div>
+
+            <button class="group relative w-full overflow-hidden rounded-2xl bg-emerald-500/20 px-4 py-3 text-center text-sm font-semibold text-emerald-100 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 hover:bg-emerald-500/30">
+              <span class="relative z-10">Pay now</span>
+              <span class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>
+            </button>
+            <p id="submitMsg" class="hidden text-sm text-emerald-300">Payment submitted (demo). In a real app, this would call your payments API.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // --- Data ---
+    const plansByTab = {
+      Personal: [
+        { name: "Pro", price: "$20.00", cadence: "/ month", subtext: "$16.67 when billed annually", cta: "Get Pro", badge: "Popular", features: [
+          "10× as many citations in answers","Access to Labs","Unlimited file and photo uploads","Extended access to Research","Extended access to image generation","Limited access to video generation","One subscription for the latest AI models including GPT-5 and Claude Sonnet 4","Exclusive access to Pro Perks and more"] },
+        { name: "Max", price: "$200.00", cadence: "/ month", cta: "Get Max", highlight: true, features: [
+          "Everything in Pro","Early access to Comet, the agentic browser","Unlimited access to Labs","Unlimited access to Research","Use advanced AI models like OpenAI o3-pro and Anthropic Claude Opus 4.1","Enhanced access to video generation","Priority support"] }
+      ],
+      Education: [
+        { name: "Student Pro", price: "$9.00", cadence: "/ month", subtext: "Discounted with .edu verification", cta: "Get Student Pro", badge: "Best value", features: [
+          "All Personal Pro features","Research citations assistant","Notebook uploads up to 1GB","Presentation helper & outlines","Image generation credits each term"] },
+        { name: "Faculty Max", price: "$99.00", cadence: "/ month", cta: "Get Faculty Max", highlight: true, features: [
+          "Everything in Student Pro","Priority model access during peak times","Classroom workspace with shared prompts","Early access to experimental tools","Priority support"] }
+      ],
+      Business: [
+        { name: "Team", price: "$39.00", cadence: "/ user / month", subtext: "Billed annually", cta: "Start Team", badge: "Popular", features: [
+          "Everything in Personal Pro","Shared workspaces & admin controls","SSO and user management","Usage analytics","Image & video generation policy controls"] },
+        { name: "Enterprise Max", price: "Contact sales", cadence: "", cta: "Contact sales", highlight: true, features: [
+          "Everything in Team","Dedicated model capacity","Advanced compliance & data retention","Security reviews and SOC2 reports","Premium support with SLA"] }
+      ]
+    };
+
+    // --- Render ---
+    function renderPlans(tab){
+      const container = document.getElementById('plans');
+      container.innerHTML = '';
+      plansByTab[tab].forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = `relative overflow-hidden rounded-3xl border p-6 md:p-8 opacity-0 translate-y-3 transition-all duration-500 ${p.highlight ? 'border-indigo-400/30 bg-gradient-to-b from-zinc-900 to-zinc-900/40 shadow-xl shadow-indigo-500/10' : 'border-zinc-800 bg-zinc-900/40'}`;
+
+        if(p.badge){
+          const b = document.createElement('div');
+          b.className = 'absolute right-4 top-4 rounded-full bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-300 ring-1 ring-sky-400/30';
+          b.textContent = p.badge;
+          card.appendChild(b);
+        }
+
+        const header = document.createElement('div');
+        header.className = 'mb-6';
+        header.style.animation = 'floaty 6s ease-in-out infinite';
+        header.innerHTML = `
+          <h3 class="text-2xl font-semibold tracking-tight">${p.name}</h3>
+          <div class="mt-4 flex items-baseline gap-2">
+            <span class="text-4xl font-bold tracking-tight">${p.price}</span>
+            <span class="text-zinc-400">${p.cadence}</span>
+          </div>
+          ${p.subtext ? `<p class=\"mt-1 text-xs text-zinc-400\">${p.subtext}</p>` : ''}
+          <div class="cta-slot mt-6"></div>
+        `;
+        card.appendChild(header);
+
+        // CTA button with dataset and click handler
+        const ctaBtn = document.createElement('button');
+        ctaBtn.className = `group relative w-full overflow-hidden rounded-2xl px-4 py-3 text-center text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2 active:scale-[0.98] ${p.highlight ? 'bg-indigo-500/20 text-indigo-200 hover:bg-indigo-500/30 focus:ring-indigo-400' : 'bg-sky-500/20 text-sky-200 hover:bg-sky-500/30 focus:ring-sky-400'}`;
+        ctaBtn.innerHTML = `<span class="relative z-10">${p.cta}</span><span class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>`;
+        ctaBtn.dataset.plan = p.name; ctaBtn.dataset.price = p.price; ctaBtn.dataset.cadence = p.cadence; ctaBtn.dataset.features = JSON.stringify(p.features);
+        ctaBtn.addEventListener('click', () => openCheckout({ name: p.name, price: p.price, cadence: p.cadence, features: p.features }));
+        header.querySelector('.cta-slot').appendChild(ctaBtn);
+
+        const ul = document.createElement('ul');
+        ul.className = 'space-y-2 text-sm';
+        p.features.forEach(f => {
+          const li = document.createElement('li');
+          li.className = 'group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/5';
+          li.innerHTML = `<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"currentColor\" class=\"h-5 w-5 flex-none text-emerald-400\"><path fill-rule=\"evenodd\" d=\"M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.28a.75.75 0 1 0-1.06-1.06l-4.22 4.22-1.53-1.53a.75.75 0 0 0-1.06 1.06l2.06 2.06a.75.75 0 0 0 1.06 0l4.75-4.75Z\" clip-rule=\"evenodd\"/></svg><span class=\"text-zinc-200\">${f}</span>`;
+          ul.appendChild(li);
+        });
+        card.appendChild(ul);
+
+        container.appendChild(card);
+        setTimeout(() => { card.classList.remove('opacity-0','translate-y-3'); card.classList.add('opacity-100','translate-y-0'); }, 80*i);
+      });
+    }
+
+    function switchTab(tab){
+      const container = document.getElementById('plans');
+      container.classList.add('opacity-0');
+      setTimeout(() => {
+        renderPlans(tab);
+        document.querySelectorAll("[id^='tab-']").forEach(el => { el.classList.remove('bg-zinc-800','text-white','shadow'); el.classList.add('text-zinc-400','hover:text-zinc-200'); });
+        const active = document.getElementById(`tab-${tab}`);
+        active.classList.add('bg-zinc-800','text-white','shadow'); active.classList.remove('text-zinc-400','hover:text-zinc-200');
+        setTimeout(() => container.classList.remove('opacity-0'), 20);
+      }, 180);
+    }
+
+    // --- Checkout wiring ---
+    function openCheckout(summary){
+      document.getElementById('summaryPlanName').textContent = summary.name || '';
+      document.getElementById('summaryPrice').textContent = summary.price || '';
+      document.getElementById('summaryCadence').textContent = summary.cadence || '';
+      const ul = document.getElementById('summaryFeatures'); ul.innerHTML='';
+      (summary.features||[]).slice(0,6).forEach(f => { const li=document.createElement('li'); li.textContent=f; ul.appendChild(li); });
+      document.getElementById('checkout').classList.remove('hidden');
+      document.getElementById('plansRoot').classList.add('hidden');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    document.getElementById('backToPlans').addEventListener('click', () => {
+      document.getElementById('checkout').classList.add('hidden');
+      document.getElementById('plansRoot').classList.remove('hidden');
+    });
+
+    // --- Formatting & validation ---
+    const form = document.getElementById('paymentForm');
+    const cardIn = form.querySelector('input[name="card"]');
+    const expIn = form.querySelector('input[name="expiry"]');
+    const cvcIn = form.querySelector('input[name="cvc"]');
+    const cardError = document.getElementById('cardError');
+
+    cardIn.addEventListener('input', () => { const d = cardIn.value.replace(/\D/g,'').slice(0,16); cardIn.value = d.replace(/(\d{4})(?=\d)/g,'$1 ').trim(); });
+    expIn.addEventListener('input', () => { const d = expIn.value.replace(/\D/g,'').slice(0,4); expIn.value = d.length>2 ? d.slice(0,2)+'/'+d.slice(2) : d; });
+    cvcIn.addEventListener('input', () => { cvcIn.value = cvcIn.value.replace(/\D/g,'').slice(0,4); });
+
+    function luhnOk(num){ const n=num.replace(/\s+/g,''); let sum=0,alt=false; for(let i=n.length-1;i>=0;i--){ let d=parseInt(n[i],10); if(alt){ d*=2; if(d>9)d-=9;} sum+=d; alt=!alt;} return n.length>=13 && sum%10===0; }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const ok = luhnOk(cardIn.value) && /^(0[1-9]|1[0-2])\/\d{2}$/.test(expIn.value) && /\d{3,4}/.test(cvcIn.value);
+      cardError.classList.toggle('hidden', luhnOk(cardIn.value));
+      if(!ok) return;
+      document.getElementById('submitMsg').classList.remove('hidden');
+    });
+
+    // Initial render
+    renderPlans('Personal');
+  </script>
+</body>
+</html>
